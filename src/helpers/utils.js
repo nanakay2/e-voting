@@ -17,3 +17,8 @@ export function generateVotersNumber() {
 export const disableSubmitButton = (formValueKeys, formValues) => {
   return !!formValueKeys.filter((item) => !formValues[item]).length;
 };
+
+export const validatePassword = (password) => {
+  const pattern = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)");
+  return pattern.test(password) && password.length > 6;
+};

@@ -47,13 +47,15 @@ const UsersPage = ({ title }) => {
       render: (_, record) => (
         <Space size="middle">
           <a
+            style={{ color: "#3c28dc" }}
             onClick={() => {
-              toggleAddVoterForm(record, "Update User Information");
+              toggleAddUserForm(record, "Update User Information");
             }}
           >
             Edit
           </a>
           <a
+            style={{ color: "#3c28dc" }}
             onClick={() => {
               setRecordToDelete({ name: record.name, id: record.id });
               setShowDeleteModal(true);
@@ -83,7 +85,10 @@ const UsersPage = ({ title }) => {
       .catch((err) => console.log("An error occurred fetching users"));
   };
 
-  const toggleAddVoterForm = (initialData = null, header = "Register User") => {
+  const toggleAddUserForm = (
+    initialData = null,
+    header = "Register Student"
+  ) => {
     dispatch(
       showModal({
         header: header,
@@ -124,18 +129,18 @@ const UsersPage = ({ title }) => {
           alignItems: "center",
         }}
       >
-        <h1 style={{ fontSize: "40px" }}>{title}</h1>
+        <h1 style={{ fontSize: "40px", color: "#393939" }}>{title}</h1>
         <Button
           type="primary"
           shape="round"
           icon={<PlusOutlined />}
           size="large"
-          style={{ fontWeight: 500 }}
+          style={{ fontWeight: 500, backgroundColor: "#3c28dc" }}
           onClick={() => {
-            toggleAddVoterForm();
+            toggleAddUserForm();
           }}
         >
-          Add New User
+          Add New Student
         </Button>
       </div>
 

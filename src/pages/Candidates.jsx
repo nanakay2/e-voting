@@ -16,7 +16,7 @@ import DeleteModal from "../components/DeleteModal";
 const CandidatesPage = ({ title }) => {
   const dispatch = useDispatch();
   const modalState = useSelector((state) => state.modal);
-  const [partyInfo, setPartyInfo] = useState(null);
+  const [departmentInfo, setDepartmentInfo] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [recordToDelete, setRecordToDelete] = useState(null);
   const [tableData, setTableData] = useState([]);
@@ -28,10 +28,10 @@ const CandidatesPage = ({ title }) => {
       key: "name",
     },
     {
-      title: "Party",
-      dataIndex: "party",
-      key: "party",
-      render: (_, data) => partyInfo[data.party]?.name,
+      title: "Department",
+      dataIndex: "department",
+      key: "department",
+      render: (_, data) => departmentInfo[data.department]?.name,
     },
     {
       title: "Action",
@@ -39,6 +39,7 @@ const CandidatesPage = ({ title }) => {
       render: (_, record) => (
         <Space size="middle">
           <a
+            style={{ color: "#3c28dc" }}
             onClick={() => {
               toggleCreateCandidateForm(record, "Update Candidate Information");
             }}
@@ -46,6 +47,7 @@ const CandidatesPage = ({ title }) => {
             Edit
           </a>
           <a
+            style={{ color: "#3c28dc" }}
             onClick={() => {
               setRecordToDelete({ name: record.name, id: record.id });
               setShowDeleteModal(true);
@@ -59,7 +61,7 @@ const CandidatesPage = ({ title }) => {
   ];
 
   useEffect(() => {
-    getPartyInfo();
+    getDepartmentInfo();
     getCandidateInfo();
   }, [modalState]);
 
@@ -76,11 +78,11 @@ const CandidatesPage = ({ title }) => {
       .catch((err) => console.log("An error occurred fetching candidates"));
   };
 
-  const getPartyInfo = () => {
-    getDocs(collection(db, "party"))
+  const getDepartmentInfo = () => {
+    getDocs(collection(db, "department"))
       .then((snapshot) => {
         snapshot.forEach((item) => {
-          setPartyInfo((prev) => ({ ...prev, [item.id]: item.data() }));
+          setDepartmentInfo((prev) => ({ ...prev, [item.id]: item.data() }));
         });
       })
       .catch((err) => console.log("An error occurred fetching candidates"));
@@ -102,7 +104,7 @@ const CandidatesPage = ({ title }) => {
   const handleDeleteAction = async () => {
     try {
       await deleteDoc(doc(db, "candidates", recordToDelete?.id));
-      getPartyInfo();
+      getDepartmentInfo();
       getCandidateInfo();
       setShowDeleteModal(false);
     } catch (err) {
@@ -131,13 +133,13 @@ const CandidatesPage = ({ title }) => {
           alignItems: "center",
         }}
       >
-        <h1 style={{ fontSize: "40px" }}>{title}</h1>
+        <h1 style={{ fontSize: "40px", color: "#393939" }}>{title}</h1>
         <Button
           type="primary"
           shape="round"
           icon={<PlusOutlined />}
           size="large"
-          style={{ fontWeight: 500 }}
+          style={{ fontWeight: 500, backgroundColor: "#3c28dc" }}
           onClick={() => {
             toggleCreateCandidateForm();
           }}

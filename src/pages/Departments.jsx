@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { showModal } from "../redux/slices/modal";
 import DeleteModal from "../components/DeleteModal";
 
-const PartiesPage = ({ title }) => {
+const DepartmentsPage = ({ title }) => {
   const dispatch = useDispatch();
   const modalState = useSelector((state) => state.modal);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -19,11 +19,6 @@ const PartiesPage = ({ title }) => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-    },
-    {
-      title: "Founded",
-      dataIndex: "founded",
-      key: "founded",
     },
     {
       title: "Color",
@@ -46,6 +41,7 @@ const PartiesPage = ({ title }) => {
       render: (_, record) => (
         <Space size="middle">
           <a
+            style={{ color: "#3c28dc" }}
             onClick={() => {
               toggleAddNewPartyForm(record, "Update Party Information");
             }}
@@ -53,6 +49,7 @@ const PartiesPage = ({ title }) => {
             Edit
           </a>
           <a
+            style={{ color: "#3c28dc" }}
             onClick={() => {
               setRecordToDelete({ name: record.name, id: record.id });
               setShowDeleteModal(true);
@@ -70,7 +67,7 @@ const PartiesPage = ({ title }) => {
   }, [modalState]);
 
   const getPartyInfo = () => {
-    getDocs(collection(db, "party"))
+    getDocs(collection(db, "department"))
       .then((snapshot) => {
         const tempArray = [];
         snapshot.forEach((item) => {
@@ -127,18 +124,18 @@ const PartiesPage = ({ title }) => {
           alignItems: "center",
         }}
       >
-        <h1 style={{ fontSize: "40px" }}>{title}</h1>
+        <h1 style={{ fontSize: "40px", color: "#393939" }}>{title}</h1>
         <Button
           type="primary"
           shape="round"
           icon={<PlusOutlined />}
           size="large"
-          style={{ fontWeight: 500 }}
+          style={{ fontWeight: 500, backgroundColor: "#3c28dc" }}
           onClick={() => {
             toggleAddNewPartyForm();
           }}
         >
-          Add New Party
+          Add New Department
         </Button>
       </div>
 
@@ -147,4 +144,4 @@ const PartiesPage = ({ title }) => {
   );
 };
 
-export default PartiesPage;
+export default DepartmentsPage;

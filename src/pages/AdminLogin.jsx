@@ -78,9 +78,8 @@ const AdminLogin = () => {
   return (
     <div
       style={{
-        backgroundColor: "white",
+        backgroundColor: "#ff5101",
         display: "flex",
-        // justifyContent: "center",
         alignItems: "center",
         width: "100%",
         height: "100vh",
@@ -92,11 +91,12 @@ const AdminLogin = () => {
         style={{
           marginBottom: 20,
           marginTop: 15,
-          fontSize: 20,
-          fontWeight: 600,
+          fontSize: 35,
+          fontWeight: 700,
+          color: "white",
         }}
       >
-        Welcome to E-Voting (Admin)
+        Welcome to Torrens University E-Voting (Admin Portal)
       </p>
       <div
         style={{
@@ -146,7 +146,7 @@ const AdminLogin = () => {
             height: 50,
             borderRadius: 70,
             width: "60%",
-            backgroundColor: "black",
+            backgroundColor: "#3c28dc",
             color: "white",
             fontWeight: 700,
             alignSelf: "center",
@@ -154,7 +154,7 @@ const AdminLogin = () => {
           onClick={handleSubmit}
           disabled={loading}
         >
-          {loading ? <Loader size={24} color="white" /> : "Login"}
+          {loading ? <Loader size={24} color="#3c28dc" /> : "Login"}
         </FormButton>
       </div>
     </div>
@@ -164,8 +164,8 @@ const AdminLogin = () => {
 const FormButton = styled(Button)`
   &:hover {
     background-color: white !important;
-    color: black !important;
-    border-color: black !important;
+    color: #3c28dc !important;
+    border-color: #3c28dc !important;
   }
 `;
 

@@ -20,7 +20,7 @@ const CreateElection = () => {
   const dispatch = useDispatch();
   const initialData = useSelector((state) => state.modal?.data);
   const [formValues, setFormValues] = useState({});
-  const [partyInfo, setPartyInfo] = useState({});
+  const [departmentInfo, setDepartmentInfo] = useState({});
   const [candidatesInfo, setCandidatesInfo] = useState({});
   const [loading, setLoading] = useState(false);
   const dateFormat = "YYYY";
@@ -89,10 +89,10 @@ const CreateElection = () => {
   };
 
   const getPartyInfo = () => {
-    getDocs(collection(db, "party"))
+    getDocs(collection(db, "department"))
       .then((snapshot) => {
         snapshot.forEach((item) => {
-          setPartyInfo((prev) => ({ ...prev, [item.id]: item.data() }));
+          setDepartmentInfo((prev) => ({ ...prev, [item.id]: item.data() }));
         });
       })
       .catch((err) => console.log("An error occurred fetching parties"));
@@ -121,7 +121,7 @@ const CreateElection = () => {
               message: "Please input your name!",
             },
           ]}
-          errorStatus={!formValues.name}
+          errorStatus={!formValues?.name}
           valuePropName={formValues?.name}
           onChange={handleInputChange}
         >
@@ -138,7 +138,7 @@ const CreateElection = () => {
               message: "Please select status!",
             },
           ]}
-          errorStatus={!formValues.status}
+          errorStatus={!formValues?.status}
           valuePropName={formValues?.status}
           onChange={handleInputChange}
         >
@@ -167,7 +167,7 @@ const CreateElection = () => {
               message: "Please select position!",
             },
           ]}
-          errorStatus={!formValues.name}
+          errorStatus={!formValues?.position}
           valuePropName={formValues?.position}
         >
           <Select
@@ -178,9 +178,7 @@ const CreateElection = () => {
             defaultValue={formValues?.position}
             value={formValues?.position}
           >
-            <Option value="Governor">Governor</Option>
-            <Option value="Senator">Senator</Option>
-            <Option value="Head of State">Head of State</Option>
+            <Option value="Department Rep.">Department Rep.</Option>
           </Select>
         </Form.Item>
 
@@ -233,8 +231,8 @@ const CreateElection = () => {
             {Object.keys(candidatesInfo).map((item) => {
               return (
                 <Option value={item} key={item}>
-                  {`${candidatesInfo[item].name} (${
-                    partyInfo[candidatesInfo[item].party].name
+                  {`${candidatesInfo[item]?.name} (${
+                    departmentInfo[candidatesInfo[item].department]?.name
                   })`}
                 </Option>
               );
@@ -247,7 +245,7 @@ const CreateElection = () => {
         <Button
           type="primary"
           htmlType="submit"
-          style={{ width: "100%" }}
+          style={{ width: "100%", backgroundColor: "#3c28dc" }}
           onClick={handleFormSubmit}
           disabled={
             disableSubmitButton(

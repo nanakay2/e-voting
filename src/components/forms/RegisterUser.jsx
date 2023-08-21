@@ -18,25 +18,32 @@ import {
   query,
   where,
   getDocs,
+  or,
 } from "firebase/firestore";
 import { db } from "../../firebase-config";
 import { hideModal } from "../../redux/slices/modal";
 import dayjs from "dayjs";
 import emailjs from "@emailjs/browser";
-import { generateVotersNumber, disableSubmitButton } from "../../helpers/utils";
+import {
+  generateVotersNumber,
+  disableSubmitButton,
+  validatePassword,
+} from "../../helpers/utils";
 import styled from "styled-components";
 
 const { Option } = Select;
 
 const RegisterUser = () => {
+  const [form] = Form.useForm();
   const dispatch = useDispatch();
   const initialData = useSelector((state) => state.modal?.data);
   const [formValues, setFormValues] = useState({});
   const [loading, setLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
   const dateFormat = "YYYY-MM-DD";
 
   useEffect(() => {
-    if (initialData) {
+    if (initialData !== null) {
       setFormValues({
         ...initialData,
         date_of_birth: dayjs(initialData?.date_of_birth, dateFormat),
@@ -46,6 +53,10 @@ const RegisterUser = () => {
     }
 
     setLoading(false);
+
+    return () => {
+      form.resetFields();
+    };
   }, [initialData]);
 
   const handleInputChange = (e) => {
@@ -74,15 +85,21 @@ const RegisterUser = () => {
       );
   };
 
-  const emailExists = async () => {
+  const emailOrStudentExists = async () => {
     try {
       const usrRef = collection(db, "users");
-      const userQuery = query(usrRef, where("email", "==", formValues.email));
+      const userQuery = query(
+        usrRef,
+        or(
+          where("email", "==", formValues.email),
+          where("s_number", "==", formValues.s_number)
+        )
+      );
       const userSnapShot = await getDocs(userQuery);
       let existAlready = false;
       userSnapShot.forEach(async (doc) => {
         if (doc.data()) {
-          message.error("Email already exists");
+          message.error("Email or student number already exists");
           setLoading(false);
           existAlready = true;
         }
@@ -98,7 +115,7 @@ const RegisterUser = () => {
     setLoading(true);
     e.preventDefault();
 
-    const emailEx = await emailExists();
+    const emailEx = await emailOrStudentExists();
     if (!initialData) {
       if (!emailEx) {
         try {
@@ -140,24 +157,19 @@ const RegisterUser = () => {
     }
   };
 
-  const generateVNumber = async () => {
-    let generatedNumber = generateVotersNumber();
-    const usrRef = collection(db, "users");
-    const userQuery = query(usrRef, where("v_number", "==", generatedNumber));
-    const userSnapShot = await getDocs(userQuery);
-    userSnapShot.forEach(async (doc) => {
-      if (doc.data()) {
-        await generateVNumber();
+  useEffect(() => {
+    if (formValues?.password !== undefined) {
+      if (!validatePassword(formValues?.password)) {
+        console.log(formValues?.password);
+        setPasswordError("Password Invalid");
+      } else {
+        setPasswordError("");
       }
-    });
-
-    setFormValues({ ...formValues, v_number: generatedNumber });
-  };
-
-  console.log("FORM", formValues);
+    }
+  }, [formValues?.password]);
 
   return (
-    <Form name="basic" layout="vertical" preserve={false} autoComplete="off">
+    <Form name="basic" layout="vertical" autoComplete="off">
       <div style={{ display: "flex", flexDirection: "row", gap: 10 }}>
         <Form.Item
           label="Name"
@@ -321,25 +333,19 @@ const RegisterUser = () => {
 
       <div style={{ display: "flex", flexDirection: "row", gap: 10 }}>
         <Form.Item
-          label="Voter Id"
-          name="v_number"
+          label="Student Id"
+          name="s_number"
           style={{ width: "48%" }}
           rules={[
             {
               required: true,
-              message: "Please input voter id number!",
+              message: "Please input student id!",
             },
           ]}
-          valuePropName={formValues?.v_number}
+          valuePropName={formValues?.s_number}
           onChange={handleInputChange}
         >
-          <Input name="v_number" value={formValues?.v_number} disabled />
-          <div
-            style={{ color: "#1778ff", cursor: "pointer" }}
-            onClick={generateVNumber}
-          >
-            Generate Voter's ID Number
-          </div>
+          <Input name="s_number" value={formValues?.v_number} />
         </Form.Item>
 
         <Form.Item
@@ -379,10 +385,32 @@ const RegisterUser = () => {
               message: "Please input password!",
             },
           ]}
+          tooltip={
+            <div>
+              <p style={{ padding: 0, margin: 0 }}>Password should:</p>
+              <p style={{ padding: 0, margin: 0, marginLeft: 10 }}>
+                - Contain at least 1 Upper case letter
+              </p>
+              <p style={{ padding: 0, margin: 0, marginLeft: 10 }}>
+                - Contain at least 1 Lower case letter
+              </p>
+              <p style={{ padding: 0, margin: 0, marginLeft: 10 }}>
+                - Contain at least 1 Number{" "}
+              </p>
+              <p style={{ padding: 0, margin: 0, marginLeft: 10 }}>
+                - Be greater than 6 characters
+              </p>
+            </div>
+          }
           valuePropName={formValues?.password}
           onChange={handleInputChange}
         >
           <Input.Password name="password" value={formValues?.password} />
+          {formValues?.password && !!passwordError && (
+            <p style={{ fontStyle: "italic", color: "red", fontWeight: 500 }}>
+              Password invalid. (Check tooltip)
+            </p>
+          )}
         </Form.Item>
       </div>
 
@@ -478,7 +506,7 @@ const RegisterUser = () => {
         <Button
           type="primary"
           htmlType="submit"
-          style={{ width: "100%" }}
+          style={{ width: "100%", backgroundColor: "#3c28dc", color: "white" }}
           onClick={handleFormSubmit}
           disabled={
             disableSubmitButton(
@@ -491,7 +519,7 @@ const RegisterUser = () => {
                 "gender",
                 "contact",
                 "email",
-                "v_number",
+                "s_number",
                 "type",
                 "password",
                 "next_of_kin",

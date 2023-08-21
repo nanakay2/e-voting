@@ -30,7 +30,12 @@ const DeleteModal = ({ show, onClose, name, confirm }) => {
           type="primary"
           shape="round"
           size="large"
-          style={{ fontWeight: 500 }}
+          style={{
+            fontWeight: 500,
+            backgroundColor: "#3c28dc",
+            color: "white",
+            borderColor: "#3c28dc",
+          }}
           onClick={confirm}
         >
           Delete
@@ -38,7 +43,7 @@ const DeleteModal = ({ show, onClose, name, confirm }) => {
         <Button
           shape="round"
           size="large"
-          style={{ fontWeight: 500 }}
+          style={{ fontWeight: 500, color: "#3c28dc" }}
           onClick={onClose}
         >
           Cancel

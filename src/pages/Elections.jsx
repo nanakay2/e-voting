@@ -45,6 +45,7 @@ const ElectionsPage = ({ title }) => {
       render: (_, record) => (
         <Space size="middle">
           <a
+            style={{ color: "#3c28dc" }}
             onClick={() => {
               toggleCreateElectionsForm(record, "Update Election Information");
             }}
@@ -52,6 +53,7 @@ const ElectionsPage = ({ title }) => {
             Edit
           </a>
           <a
+            style={{ color: "#3c28dc" }}
             onClick={() => {
               setRecordToDelete({ name: record.name, id: record.id });
               setShowDeleteModal(true);
@@ -142,13 +144,13 @@ const ElectionsPage = ({ title }) => {
           alignItems: "center",
         }}
       >
-        <h1 style={{ fontSize: "40px" }}>{title}</h1>
+        <h1 style={{ fontSize: "40px", color: "#393939" }}>{title}</h1>
         <Button
           type="primary"
           shape="round"
           icon={<PlusOutlined />}
           size="large"
-          style={{ fontWeight: 500 }}
+          style={{ fontWeight: 500, backgroundColor: "#3c28dc" }}
           onClick={() => toggleCreateElectionsForm(null, "Create an Election")}
         >
           Create an Election

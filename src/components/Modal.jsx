@@ -3,7 +3,7 @@ import { useState } from "react";
 import RegisterUser from "./forms/RegisterUser";
 import { useSelector, useDispatch } from "react-redux";
 import { hideModal } from "../redux/slices/modal";
-import RegisterParty from "./forms/RegisterParty";
+import RegisterDepartment from "./forms/RegisterDepartment";
 import RegisterCandidate from "./forms/RegisterCandidate";
 import CreateElection from "./forms/CreateAnElection";
 
@@ -26,7 +26,7 @@ const CustomModal = ({ children }) => {
       {modalState.type === "registerUser" && <RegisterUser />}
       {modalState.type === "registerCandidate" && <RegisterCandidate />}
       {modalState.type === "createElection" && <CreateElection />}
-      {modalState.type === "registerParty" && <RegisterParty />}
+      {modalState.type === "registerParty" && <RegisterDepartment />}
     </Modal>
   );
 };

@@ -7,6 +7,7 @@ import { db } from "../firebase-config";
 import { useNavigate } from "react-router-dom";
 import useLocalStorage from "../hooks/useLocalStorage";
 import Loader from "../components/Loader";
+import { validatePassword } from "../helpers/utils";
 
 const VotingPortalLogin = () => {
   const navigate = useNavigate();
@@ -92,6 +93,8 @@ const VotingPortalLogin = () => {
     }
   };
 
+  console.log("LLLL", validatePassword("kdkkd"));
+
   return (
     <>
       <InfoModal
@@ -111,7 +114,7 @@ const VotingPortalLogin = () => {
         style={{
           display: "flex",
           flexDirection: "row",
-          backgroundColor: "white",
+          backgroundColor: "#ff5101",
           // width: "100%",
           height: "100%",
           padding: 40,
@@ -129,10 +132,19 @@ const VotingPortalLogin = () => {
             position: "relative",
           }}
         >
-          <p style={{ marginBottom: 50, fontSize: 25, fontWeight: 700 }}>
-            Welcome to E-Voting System
+          <p
+            style={{
+              marginBottom: 50,
+              fontSize: 25,
+              fontWeight: 700,
+              color: "white",
+            }}
+          >
+            Welcome to Torrens E-Voting Portal
           </p>
-          <label style={{ marginBottom: 10, fontWeight: 700 }}>Email</label>
+          <label style={{ marginBottom: 10, fontWeight: 700, color: "white" }}>
+            Email
+          </label>
           <Input
             style={{ height: 60, borderRadius: 15 }}
             name="email"
@@ -145,7 +157,9 @@ const VotingPortalLogin = () => {
           />
           <div style={{ height: 30 }}></div>
 
-          <label style={{ marginBottom: 10, fontWeight: 700 }}>Password</label>
+          <label style={{ marginBottom: 10, fontWeight: 700, color: "white" }}>
+            Password
+          </label>
           <Input.Password
             style={{ height: 60, borderRadius: 15 }}
             placeholder="Password"
@@ -174,6 +188,7 @@ const VotingPortalLogin = () => {
                 marginRight: "auto",
                 marginLeft: 30,
                 cursor: "pointer",
+                color: "white",
               }}
               onClick={() => {
                 setShowInfoModal(true);
@@ -189,7 +204,7 @@ const VotingPortalLogin = () => {
             </p> */}
             <div style={{ width: 30 }}></div>
             <p
-              style={{ fontWeight: 700, cursor: "pointer" }}
+              style={{ fontWeight: 700, cursor: "pointer", color: "white" }}
               onClick={() => {
                 navigate("/election-results");
               }}
@@ -206,9 +221,9 @@ const VotingPortalLogin = () => {
           )}
           <Button
             style={{
-              backgroundColor: "black",
+              backgroundColor: "#3c28dc",
               color: "white",
-              borderColor: "black",
+              borderColor: "#3c28dc",
               height: 60,
               fontWeight: 700,
               borderRadius: 15,
@@ -223,7 +238,7 @@ const VotingPortalLogin = () => {
           style={{
             width: "60%",
             height: "100%",
-            backgroundColor: "#f8f8fa",
+            backgroundColor: "#ff5101",
             borderRadius: 15,
             padding: 30,
             display: "flex",

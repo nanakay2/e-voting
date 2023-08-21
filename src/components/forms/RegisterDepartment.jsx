@@ -9,18 +9,16 @@ import { ChromePicker } from "react-color";
 import dayjs from "dayjs";
 import { disableSubmitButton } from "../../helpers/utils";
 
-const RegisterParty = () => {
+const RegisterDepartment = () => {
   const dispatch = useDispatch();
   const initialData = useSelector((state) => state.modal?.data);
   const [formValues, setFormValues] = useState({});
   const [loading, setLoading] = useState(false);
-  const dateFormat = "YYYY";
 
   useEffect(() => {
     if (initialData)
       setFormValues({
         ...initialData,
-        founded: dayjs(initialData?.founded, dateFormat),
       });
     else setFormValues({});
 
@@ -37,9 +35,8 @@ const RegisterParty = () => {
 
     if (!initialData) {
       try {
-        const docRef = await addDoc(collection(db, "party"), {
+        const docRef = await addDoc(collection(db, "department"), {
           ...formValues,
-          founded: dayjs(formValues.founded).format("YYYY"),
         });
         if (docRef) {
           setLoading(false);
@@ -53,10 +50,9 @@ const RegisterParty = () => {
       }
     } else {
       try {
-        const { id, ...partyInfo } = formValues;
-        const docRef = await updateDoc(doc(db, "party", initialData?.id), {
-          ...partyInfo,
-          founded: dayjs(partyInfo.founded).format("YYYY"),
+        const { id, ...departmentInfo } = formValues;
+        const docRef = await updateDoc(doc(db, "department", initialData?.id), {
+          ...departmentInfo,
         });
         if (docRef) setLoading(false);
 
@@ -87,21 +83,6 @@ const RegisterParty = () => {
         >
           <Input name="name" value={formValues?.name} />
         </Form.Item>
-
-        <div style={{ width: "48%" }}>
-          <p style={{ margin: 0, padding: 0, marginBottom: 7 }}>
-            <span style={{ color: "#ff4d4f", marginRight: 5 }}>*</span>Founded
-          </p>
-          <DatePicker
-            picker="year"
-            onChange={(d, ds) => {
-              setFormValues({ ...formValues, founded: dayjs(ds, dateFormat) });
-            }}
-            defaultValue={formValues?.founded}
-            value={formValues?.founded}
-            style={{ width: "100%", height: "40%" }}
-          />
-        </div>
       </div>
 
       <div style={{ display: "flex", flexDirection: "row", gap: 10 }}>
@@ -137,11 +118,10 @@ const RegisterParty = () => {
         <Button
           type="primary"
           htmlType="submit"
-          style={{ width: "100%" }}
+          style={{ width: "100%", backgroundColor: "#3c28dc" }}
           onClick={handleFormSubmit}
           disabled={
-            disableSubmitButton(["name", "color", "founded"], formValues) ||
-            loading
+            disableSubmitButton(["name", "color"], formValues) || loading
           }
         >
           {loading && <Loader size={24} color="white" />}
@@ -152,4 +132,4 @@ const RegisterParty = () => {
   );
 };
 
-export default RegisterParty;
+export default RegisterDepartment;

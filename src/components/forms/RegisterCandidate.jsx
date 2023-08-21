@@ -20,27 +20,43 @@ import styled from "styled-components";
 const { Option } = Select;
 
 const RegisterCandidate = () => {
+  const [form] = Form.useForm();
   const dispatch = useDispatch();
   const initialData = useSelector((state) => state.modal?.data);
   const [formValues, setFormValues] = useState({});
-  const [partyInfo, setPartyInfo] = useState({});
+  const [departmentInfo, setDepartmentInfo] = useState({});
   const [imageUrl, setImageUrl] = useState();
   const [loading, setLoading] = useState(false);
+  const [studentsInfo, setStudentsInfo] = useState({});
+  const [selectedStudent, setSelectedStudent] = useState({});
+
   const dateFormat = "YYYY-MM-DD";
 
   useEffect(() => {
-    getPartyInfo();
+    getDepartmentInfo();
     setLoading(false);
+    getStudentInfo();
+
+    return () => {
+      form.resetFields();
+    };
   }, []);
 
   useEffect(() => {
-    if (initialData)
+    if (initialData) {
       setFormValues({
         ...initialData,
         date_of_birth: dayjs(initialData?.date_of_birth, dateFormat),
       });
-    else setFormValues({});
-  }, [initialData]);
+
+      if (Object.keys(studentsInfo).length > 0) {
+        const studObj = Object.values(studentsInfo || {}).find(
+          (item) => item?.name === initialData?.name
+        );
+        setSelectedStudent(studObj);
+      }
+    } else setFormValues({});
+  }, [initialData, studentsInfo]);
 
   const handleInputChange = (e) => {
     setFormValues({ ...formValues, [e.target.name]: e.target.value });
@@ -96,11 +112,11 @@ const RegisterCandidate = () => {
     }
   };
 
-  const getPartyInfo = () => {
-    getDocs(collection(db, "party"))
+  const getDepartmentInfo = () => {
+    getDocs(collection(db, "department"))
       .then((snapshot) => {
         snapshot.forEach((item) => {
-          setPartyInfo((prev) => ({ ...prev, [item.id]: item.data() }));
+          setDepartmentInfo((prev) => ({ ...prev, [item.id]: item.data() }));
         });
       })
       .catch((err) => console.log("An error occurred fetching parties"));
@@ -139,8 +155,64 @@ const RegisterCandidate = () => {
     });
   };
 
+  const getStudentInfo = () => {
+    getDocs(collection(db, "users"))
+      .then((snapshot) => {
+        snapshot.forEach((item) => {
+          setStudentsInfo((prev) => ({ ...prev, [item.id]: item.data() }));
+        });
+      })
+      .catch((err) => console.log("An error occurred fetching users"));
+  };
+
+  useEffect(() => {
+    setFormValues({
+      ...formValues,
+      name: selectedStudent?.name,
+      age: selectedStudent?.age,
+      date_of_birth: dayjs(selectedStudent?.date_of_birth, dateFormat),
+      address: selectedStudent?.address,
+      marital_status: selectedStudent?.marital_status,
+      gender: selectedStudent?.gender,
+      email: selectedStudent?.email,
+      contact: selectedStudent?.contact,
+    });
+  }, [selectedStudent]);
+
   return (
     <Form name="basic" layout="vertical" autoComplete="off" preserve={false}>
+      <Form.Item
+        label="Students"
+        name="students"
+        style={{ width: "100%", cursor: "pointer" }}
+        rules={[
+          {
+            required: true,
+            message: "Please select a student!",
+          },
+        ]}
+        valuePropName={selectedStudent?.name}
+        onChange={handleInputChange}
+        preserve={false}
+      >
+        <Select
+          preserve={false}
+          placeholder="Registered Students"
+          allowClear
+          onChange={(val) => {
+            setSelectedStudent(studentsInfo?.[val]);
+          }}
+          value={selectedStudent?.name}
+        >
+          {Object.keys(studentsInfo).map((item) => {
+            return (
+              <Option value={item} key={item}>
+                {`${studentsInfo[item]?.name}`}
+              </Option>
+            );
+          })}
+        </Select>
+      </Form.Item>
       <div style={{ display: "flex", flexDirection: "row", gap: 10 }}>
         <Form.Item
           label="Name"
@@ -155,7 +227,7 @@ const RegisterCandidate = () => {
           valuePropName={formValues?.name}
           onChange={handleInputChange}
         >
-          <Input name="name" value={formValues?.name} />
+          <Input name="name" value={formValues?.name} disabled />
         </Form.Item>
 
         <Form.Item
@@ -171,7 +243,7 @@ const RegisterCandidate = () => {
           valuePropName={formValues?.age}
           onChange={handleInputChange}
         >
-          <Input name="age" value={formValues?.age} type="number" />
+          <Input name="age" value={formValues?.age} type="number" disabled />
         </Form.Item>
       </div>
 
@@ -191,6 +263,7 @@ const RegisterCandidate = () => {
             defaultValue={formValues?.date_of_birth}
             value={formValues?.date_of_birth}
             style={{ width: "100%", height: "40%" }}
+            disabled
           />
         </div>
 
@@ -207,7 +280,7 @@ const RegisterCandidate = () => {
           valuePropName={formValues?.address}
           onChange={handleInputChange}
         >
-          <Input name="address" value={formValues.address} />
+          <Input name="address" value={formValues.address} disabled />
         </Form.Item>
       </div>
 
@@ -231,6 +304,7 @@ const RegisterCandidate = () => {
             }}
             defaultValue={formValues?.marital_status}
             value={formValues?.marital_status}
+            disabled
           >
             <Option value="single">Single</Option>
             <Option value="married">Married</Option>
@@ -256,6 +330,7 @@ const RegisterCandidate = () => {
             }}
             defaultValue={formValues?.gender}
             value={formValues?.gender}
+            disabled
           >
             <Option value="male">Male</Option>
             <Option value="female">Female</Option>
@@ -281,6 +356,7 @@ const RegisterCandidate = () => {
             name="contact"
             value={formValues?.contact}
             type="number"
+            disabled
           />
         </Form.Item>
 
@@ -297,35 +373,35 @@ const RegisterCandidate = () => {
           valuePropName={formValues?.email}
           onChange={handleInputChange}
         >
-          <Input name="email" value={formValues?.email} type="email" />
+          <Input name="email" value={formValues?.email} type="email" disabled />
         </Form.Item>
       </div>
 
       <div style={{ display: "flex", flexDirection: "row", gap: 10 }}>
         <Form.Item
-          label="Political Party"
-          name="party"
+          label="Department"
+          name="department"
           style={{ width: "48%" }}
           rules={[
             {
               required: true,
-              message: "Please choose a political party!",
+              message: "Please choose a department!",
             },
           ]}
-          valuePropName={formValues?.party}
+          valuePropName={formValues?.department}
         >
           <Select
-            placeholder="Political Party"
+            placeholder="Department"
             onChange={(val) => {
-              setFormValues({ ...formValues, party: val });
+              setFormValues({ ...formValues, department: val });
             }}
-            defaultValue={formValues?.party}
-            value={formValues?.party}
+            defaultValue={formValues?.department}
+            value={formValues?.department}
           >
-            {Object.keys(partyInfo).map((item) => {
+            {Object.keys(departmentInfo).map((item) => {
               return (
                 <Option value={item} key={item}>
-                  {partyInfo[item].name}
+                  {departmentInfo[item].name}
                 </Option>
               );
             })}
@@ -366,7 +442,7 @@ const RegisterCandidate = () => {
         <Button
           type="primary"
           htmlType="submit"
-          style={{ width: "100%" }}
+          style={{ width: "100%", backgroundColor: "#3c28dc" }}
           onClick={handleFormSubmit}
           disabled={
             disableSubmitButton(
@@ -379,7 +455,7 @@ const RegisterCandidate = () => {
                 "gender",
                 "contact",
                 "email",
-                "party",
+                "department",
                 "image",
               ],
               formValues
