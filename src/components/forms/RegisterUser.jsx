@@ -374,7 +374,7 @@ const RegisterUser = () => {
         </Form.Item>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "row", gap: 10 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         <Form.Item
           label="Password"
           name="password"
@@ -406,12 +406,19 @@ const RegisterUser = () => {
           onChange={handleInputChange}
         >
           <Input.Password name="password" value={formValues?.password} />
-          {formValues?.password && !!passwordError && (
-            <p style={{ fontStyle: "italic", color: "red", fontWeight: 500 }}>
-              Password invalid. (Check tooltip)
-            </p>
-          )}
         </Form.Item>
+        {!!formValues?.password && !!passwordError && (
+          <p
+            style={{
+              fontStyle: "italic",
+              color: "red",
+              fontWeight: 500,
+              marginTop: -20,
+            }}
+          >
+            Password invalid. (Check tooltip)
+          </p>
+        )}
       </div>
 
       <h3 style={{ marginTop: 5 }}>Next of Kin</h3>
