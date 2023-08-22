@@ -15,13 +15,13 @@ const VotingPortal = () => {
   const [user, setUser] = useLocalStorage("user");
   const [votes, setVotes] = useState([]);
   const [electionsData, setElectionsData] = useState({});
-  const [partyInfo, setPartyInfo] = useState([]);
+  const [departmentInfo, setDepartmentInfo] = useState([]);
   const [showVotingSuccessModal, setShowVotingSuccessModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     getRunningElection();
-    getPartyInfo();
+    getDepartmentInfo();
 
     if (!user) navigate("/", { replace: true });
   }, []);
@@ -56,15 +56,15 @@ const VotingPortal = () => {
       .catch((err) => console.log("An error occurred fetching elections"));
   };
 
-  const getPartyInfo = () => {
-    getDocs(collection(db, "party"))
+  const getDepartmentInfo = () => {
+    getDocs(collection(db, "department"))
       .then((snapshot) => {
         const tempArray = [];
         snapshot.forEach((item) => {
           const data = item.data();
           tempArray.push({ ...data, id: item.id });
         });
-        setPartyInfo(tempArray);
+        setDepartmentInfo(tempArray);
       })
       .catch((err) => console.log("An error occurred fetching party"));
   };
@@ -92,7 +92,7 @@ const VotingPortal = () => {
 
   const handleCloseModal = () => {
     setShowVotingSuccessModal(false);
-    getPartyInfo();
+    getDepartmentInfo();
     getRunningElection();
     setTimeout(() => {
       setUser(undefined);
@@ -188,8 +188,8 @@ const VotingPortal = () => {
           }}
         >
           {electionsData?.candidatesInfo?.map((item, idx) => {
-            const candidateParty = partyInfo.find(
-              (party) => party.id === item.party
+            const candidateDepartment = departmentInfo.find(
+              (dept) => dept.id === item.department
             );
 
             return (
@@ -212,7 +212,7 @@ const VotingPortal = () => {
                     height: 280,
                     width: 280,
                     objectFit: "cover",
-                    border: `solid 2px ${candidateParty?.color}`,
+                    border: `solid 2px ${candidateDepartment?.color}`,
                     borderRadius: 10,
                   }}
                 />
@@ -236,18 +236,18 @@ const VotingPortal = () => {
                     marginTop: 15,
                   }}
                 >
-                  {candidateParty.name}
+                  {candidateDepartment.name}
                 </p>
 
                 <Button
                   style={{
-                    backgroundColor: `${candidateParty?.color}`,
+                    backgroundColor: `${candidateDepartment?.color}`,
                     borderRadius: 10,
                     color: "white",
                     fontWeight: 700,
                     width: 140,
                     height: 60,
-                    border: `1px solid ${candidateParty?.color}`,
+                    border: `1px solid ${candidateDepartment?.color}`,
                     marginTop: 35,
                   }}
                   onClick={() => {
